@@ -24,13 +24,13 @@ export class CategoriesService {
      * @param dto 
      * @returns 
      */
-    async create(dto: CreateCategoryDto) {
+    async create(userId: string, dto: CreateCategoryDto) {
         try {
 
             return await this.prisma.category.create({
                 data: {
                     ...dto,
-                    userId: this.testUserId,
+                    userId,
                 },
             });
         } 
@@ -52,11 +52,11 @@ export class CategoriesService {
      * @param type 
      * @returns 
      */
-    async findAll(type?: TransactionType) {
+    async findAll(userId: string, type?: TransactionType) {
 
         return this.prisma.category.findMany({
             where: {
-                userId: this.testUserId,
+                userId,
                 ...(type && { type }),
             },
             orderBy: {
@@ -71,13 +71,13 @@ export class CategoriesService {
      * @param dto 
      * @returns 
      */
-    async update(id: string, dto: UpdateCategoryDto) {
+    async update(userId: string, id: string, dto: UpdateCategoryDto) {
 
         try {
             const result = await this.prisma.category.updateMany({
                 where: {
                     id,
-                    userId: this.testUserId,
+                    userId,
                 },
                 data: dto,
             });
@@ -111,11 +111,11 @@ export class CategoriesService {
      * @param id 
      * @returns 
      */
-    async remove(id: string) {
+    async remove(userId: string, id: string) {
         const result = await this.prisma.category.deleteMany({
             where: {
                 id,
-                userId: this.testUserId,
+                userId,
             },
         });
 

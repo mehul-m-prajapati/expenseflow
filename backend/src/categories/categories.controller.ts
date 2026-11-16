@@ -19,6 +19,17 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt/jwt.guard'
 
+import { Req } from '@nestjs/common';
+import { Request } from 'express';
+
+
+interface AuthenticatedRequest extends Request {
+  user: {
+    userId: string;
+    email: string;
+  };
+}
+
 
 @Controller('categories')
 @UseGuards(JwtAuthGuard)
@@ -34,9 +45,9 @@ export class CategoriesController {
      * @returns 
      */
     @Post()
-    async create(@Body() dto: CreateCategoryDto) {
+    async create(@Req() req: AuthenticatedRequest, @Body() dto: CreateCategoryDto) {
 
-        const category = await this.categoriesService.create(dto);
+        const category = await this.categoriesService.create(req.user.userId, dto);
 
         return {
             success: true,
@@ -52,6 +63,7 @@ export class CategoriesController {
      */
     @Get()
     async findAll(
+        @Req() req: AuthenticatedRequest,
         @Query(
             'type',
             new ParseEnumPipe(TransactionType, { optional: true }),
@@ -59,7 +71,7 @@ export class CategoriesController {
         type?: TransactionType,
     ) {
         
-        const categories = await this.categoriesService.findAll(type);
+        const categories = await this.categoriesService.findAll(req.user.userId, type);
 
         return {
             success: true,
@@ -75,10 +87,11 @@ export class CategoriesController {
      */
     @Patch(':id')
     async update(
+        @Req() req: AuthenticatedRequest,
         @Param('id', ParseUUIDPipe) id: string,
         @Body() dto: UpdateCategoryDto,
     ) {
-        const category = await this.categoriesService.update(id, dto);
+        const category = await this.categoriesService.update(req.user.userId, id, dto);
 
         return {
             success: true,
@@ -93,8 +106,9 @@ export class CategoriesController {
      * @returns 
      */
     @Delete(':id')
-    async remove(@Param('id', ParseUUIDPipe) id: string) {
-        await this.categoriesService.remove(id);
+    async remove(@Req() req: AuthenticatedRequest, @Param('id', ParseUUIDPipe) id: string) {
+        
+        await this.categoriesService.remove(req.user.userId, id);
 
         return {
             success: true,
