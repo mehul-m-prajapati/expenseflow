@@ -13,46 +13,46 @@ import { Prisma, TransactionType } from '@prisma/client';
 @Injectable()
 export class CategoriesService {
 
-  constructor(private readonly prisma: PrismaService) {}
+    constructor(private readonly prisma: PrismaService) {}
 
-  // Temporary development user.
-  // Replace with authenticated user ID after JWT integration.
-  private readonly testUserId = '00000000-0000-4000-8000-000000000001';
+    // Temporary development user.
+    // Replace with authenticated user ID after JWT integration.
+    private readonly testUserId = '00000000-0000-4000-8000-000000000001';
 
-  /**
-   * 
-   * @param dto 
-   * @returns 
-   */
-  async create(dto: CreateCategoryDto) {
-    try {
+    /**
+     * 
+     * @param dto 
+     * @returns 
+     */
+    async create(dto: CreateCategoryDto) {
+        try {
 
-      return await this.prisma.category.create({
-        data: {
-          ...dto,
-          userId: this.testUserId,
-        },
-      });
-    } 
-    catch (error: any) {
-        if (
-            error.code === 'P2002'
-        ) {
-            throw new ConflictException(
-            'Category with this name and type already exists',
-            );
+            return await this.prisma.category.create({
+                data: {
+                    ...dto,
+                    userId: this.testUserId,
+                },
+            });
+        } 
+        catch (error: any) {
+            if (
+                error.code === 'P2002'
+            ) {
+                throw new ConflictException(
+                'Category with this name and type already exists',
+                );
+            }
+
+            throw error;
         }
-
-        throw error;
     }
-  }
-  
-  /**
-   * 
-   * @param type 
-   * @returns 
-   */
-  async findAll(type?: TransactionType) {
+
+    /**
+     * 
+     * @param type 
+     * @returns 
+     */
+    async findAll(type?: TransactionType) {
 
         return this.prisma.category.findMany({
             where: {
