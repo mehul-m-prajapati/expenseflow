@@ -16,7 +16,12 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt/jwt.guard'
+
+
 @Controller('categories')
+@UseGuards(JwtAuthGuard)
 export class CategoriesController {
   
     constructor(
